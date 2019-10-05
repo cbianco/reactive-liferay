@@ -1,0 +1,28 @@
+Bundle-Name: Reactive Liferay Service
+Bundle-SymbolicName: it.cb.reactive.service
+Bundle-Version: 1.0.0
+
+Conditional-Package: io.micrometer.*,org.HdrHistogram.*,org.LatencyUtils.*
+
+Import-Package: \
+ com.google.protobuf.*;resolution:=optional,\
+ com.jcraft.jzlib.*;resolution:=optional,\
+ com.ning.compress.*;resolution:=optional,\
+ com.oracle.svm.core.annotate.*;resolution:=optional,\
+ io.netty.channel.kqueue;resolution:=optional,\
+ io.netty.internal.tcnative.*;resolution:=optional,\
+ javax.annotation.meta.*;resolution:=optional,\
+ kotlin.*;resolution:=optional,\
+ lzma.sdk.*;resolution:=optional,\
+ net.jpountz.lz4.*;resolution:=optional,\
+ org.apache.logging.log4j.*;resolution:=optional,\
+ org.bouncycastle.*;resolution:=optional,\
+ org.conscrypt.*;resolution:=optional,\
+ org.eclipse.jetty.*;resolution:=optional,\
+ org.jboss.marshalling.*;resolution:=optional,\
+ reactor.blockhound.*;resolution:=optional,\
+ sun.security.*;resolution:=optional,\
+ com.sun.management.*;resolution:=optional,\
+ com.sun.msv.*;resolution:=optional,\
+ org.relaxng.*;resolution:=optional,\
+ *

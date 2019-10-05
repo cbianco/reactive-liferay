@@ -1,0 +1,6 @@
+Bundle-Name: Reactive Liferay Test
+Bundle-SymbolicName: it.cb.reactive.test
+Bundle-Version: 1.0.0
+
+
+Import-Package: !reactor.netty.*,*

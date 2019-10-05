@@ -1,0 +1,9 @@
+Bundle-Name: Reactive Liferay RxJava
+Bundle-SymbolicName: it.cb.reactive.rxjava
+Bundle-Version: 1.0.0
+
+Conditional-Package: \
+ io.reactivex.*
+
+Export-Package: \
+ io.reactivex.*

@@ -1,0 +1,10 @@
+Bundle-Name: Reactive Liferay API
+Bundle-SymbolicName: it.cb.reactive.api
+Bundle-Version: 1.0.0
+
+Conditional-Package: \
+ org.reactivestreams
+
+Export-Package: \
+ org.reactivestreams,\
+ it.cb.reactive.http.*
