@@ -1,4 +1,4 @@
-package it.cb.reactive.internal.util;
+package it.cb.reactive.internal.http.util;
 
 import io.vavr.CheckedFunction4;
 import io.vavr.Function4;

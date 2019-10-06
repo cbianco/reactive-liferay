@@ -1,5 +1,5 @@
-Bundle-Name: Reactive Liferay Service
-Bundle-SymbolicName: it.cb.reactive.service
+Bundle-Name: Reactive Liferay Http
+Bundle-SymbolicName: it.cb.reactive.http
 Bundle-Version: 1.0.0
 
 Conditional-Package: io.micrometer.*,org.HdrHistogram.*,org.LatencyUtils.*

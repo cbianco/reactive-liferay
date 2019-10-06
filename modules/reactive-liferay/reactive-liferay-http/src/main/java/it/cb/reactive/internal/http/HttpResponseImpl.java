@@ -4,6 +4,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import it.cb.reactive.http.web.Cookie;
+import it.cb.reactive.http.web.HttpMessage;
 import it.cb.reactive.http.web.HttpResponse;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -127,6 +128,18 @@ public class HttpResponseImpl implements HttpResponse {
 		return _httpServerResponse.send(
 			Flux.from(dataStream)
 				.map(Unpooled::wrappedBuffer));
+	}
+
+	@Override
+	public Publisher<Void> sendHttpMessage(
+		Publisher<? extends HttpMessage> httpMessage) {
+		return _httpServerResponse
+			.send(
+				Flux
+					.from(httpMessage)
+					.cast(HttpMessageImpl.class)
+					.map(HttpMessageImpl::getByteBuf)
+			);
 	}
 
 	@Override

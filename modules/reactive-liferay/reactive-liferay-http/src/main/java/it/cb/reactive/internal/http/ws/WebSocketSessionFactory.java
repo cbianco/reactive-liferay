@@ -1,4 +1,4 @@
-package it.cb.reactive.internal.ws;
+package it.cb.reactive.internal.http.ws;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -18,8 +18,6 @@ import reactor.netty.http.websocket.WebsocketInbound;
 import reactor.netty.http.websocket.WebsocketOutbound;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -148,35 +146,6 @@ public class WebSocketSessionFactory {
 			private PongWebSocketMessage(ByteBuf byteBuf) {
 				super(byteBuf);
 			}
-		}
-
-		private static class WebSocketMessageImpl implements WebSocketMessage {
-
-			private WebSocketMessageImpl(ByteBuf byteBuf) {
-				_byteBuf = byteBuf;
-			}
-
-			@Override
-			public String getPayloadAsString(Charset charset) {
-				return _byteBuf.toString(charset);
-			}
-
-			@Override
-			public String getPayloadAsString() {
-				return _byteBuf.toString(StandardCharsets.UTF_8);
-			}
-
-			@Override
-			public ByteBuffer getPayload() {
-				return _byteBuf.nioBuffer();
-			}
-
-			ByteBuf getByteBuf() {
-				return _byteBuf.duplicate().retain();
-			}
-
-			private final ByteBuf _byteBuf;
-
 		}
 
 		private final WebsocketInbound _inbound;

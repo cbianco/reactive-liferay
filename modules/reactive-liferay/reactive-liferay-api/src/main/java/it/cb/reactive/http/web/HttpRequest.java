@@ -1,8 +1,12 @@
 package it.cb.reactive.http.web;
 
+import org.reactivestreams.Publisher;
+
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public interface HttpRequest {
@@ -14,14 +18,15 @@ public interface HttpRequest {
 	 *
 	 * @return the param captured value
 	 */
-	String param(CharSequence key);
+	String pathParam(CharSequence key);
 
-	/**
-	 * Returns the param captured key/value map
-	 *
-	 * @return the param captured key/value map
-	 */
-	Map<String, String> params();
+	Map<String, String> pathParams();
+
+	Optional<String> firstParam(String key);
+
+	List<String> params(String key);
+
+	Map<String, List<String>> params();
 
 	Iterable<Map.Entry<String, String>> requestHeaders();
 
@@ -110,5 +115,7 @@ public interface HttpRequest {
 	 * @return the resolved request version (HTTP 1.1 etc)
 	 */
 	String version();
+
+	Publisher<HttpMessage> receive();
 
 }

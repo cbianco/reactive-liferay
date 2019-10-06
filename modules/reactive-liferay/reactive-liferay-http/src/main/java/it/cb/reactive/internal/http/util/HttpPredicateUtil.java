@@ -1,13 +1,9 @@
-package it.cb.reactive.internal.util;
+package it.cb.reactive.internal.http.util;
 
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpVersion;
 import io.vavr.CheckedFunction1;
-import io.vavr.Predicates;
 import it.cb.reactive.http.web.HttpHandler;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.wiring.BundleWiring;
 import reactor.netty.http.server.HttpServerRequest;
 
 import java.lang.reflect.Method;
@@ -81,7 +77,7 @@ public class HttpPredicateUtil {
 			.filter(e -> (e.getKey() & method) != 0)
 			.map(Map.Entry::getValue)
 			.reduce((f1, f2) ->
-				s -> Predicates.anyOf(f1.apply(s), f2.apply(s)))
+				s -> Predicates.or(f1.apply(s), f2.apply(s)))
 			.orElseGet(() -> s -> p -> false);
 	}
 

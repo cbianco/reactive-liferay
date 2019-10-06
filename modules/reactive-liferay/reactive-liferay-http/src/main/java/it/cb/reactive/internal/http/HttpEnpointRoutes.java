@@ -1,18 +1,22 @@
-package it.cb.reactive.internal;
+package it.cb.reactive.internal.http;
 
 import it.cb.reactive.http.socket.WebSocketHandler;
 import it.cb.reactive.http.web.Endpoint;
 import it.cb.reactive.http.web.HttpHandler;
-import it.cb.reactive.internal.http.HttpRequestImpl;
-import it.cb.reactive.internal.http.HttpResponseImpl;
+import it.cb.reactive.internal.http.util.ClassLoaderUtil;
+import it.cb.reactive.internal.http.util.Predicates;
 import org.reactivestreams.Publisher;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static it.cb.reactive.internal.util.HttpServerOperationsUtil.withWebsocketSupport;
-import static it.cb.reactive.internal.ws.WebSocketSessionFactory.createWebSocketSession;
+import static it.cb.reactive.internal.http.util.HttpServerOperationsUtil.withWebsocketSupport;
+import static it.cb.reactive.internal.http.ws.WebSocketSessionFactory.createWebSocketSession;
 
 public abstract class HttpEnpointRoutes<T extends Endpoint> {
 
@@ -20,18 +24,18 @@ public abstract class HttpEnpointRoutes<T extends Endpoint> {
 
 	private final Predicate<HttpServerRequest> _condition;
 
-	protected HttpEnpointRoutes(
+	HttpEnpointRoutes(
 		T endpoint,
 		Predicate<HttpServerRequest> condition) {
 		_endpoint = endpoint;
 		_condition = condition;
 	}
 
-	public T getEndpoint() {
+	T getEndpoint() {
 		return _endpoint;
 	}
 
-	public Predicate<HttpServerRequest> getCondition() {
+	Predicate<HttpServerRequest> getCondition() {
 		return _condition;
 	}
 
@@ -44,7 +48,7 @@ public abstract class HttpEnpointRoutes<T extends Endpoint> {
 
 	private static class WebSocketRoutes extends HttpEnpointRoutes<WebSocketHandler> {
 
-		protected WebSocketRoutes(
+		WebSocketRoutes(
 			WebSocketHandler endpoint,
 			Predicate<HttpServerRequest> condition) {
 			super(endpoint, condition);
@@ -76,7 +80,7 @@ public abstract class HttpEnpointRoutes<T extends Endpoint> {
 
 	private static class NoWebSocketRoutes extends HttpEnpointRoutes<HttpHandler> {
 
-		protected NoWebSocketRoutes(
+		NoWebSocketRoutes(
 			HttpHandler endpoint,
 			Predicate<HttpServerRequest> condition) {
 			super(endpoint, condition);
@@ -94,7 +98,17 @@ public abstract class HttpEnpointRoutes<T extends Endpoint> {
 
 		@Override
 		public Publisher<Void> handle(
-			HttpServerRequest request, HttpServerResponse response) {
+			final HttpServerRequest request, HttpServerResponse response) {
+
+			Arrays
+				.stream(Predicates.getPredicateArray(getCondition()))
+				.filter(p -> p.test(request))
+				.findFirst()
+				.filter(s ->
+					_httpPredicateClass
+						.isAssignableFrom(s.getClass()))
+				.ifPresent(p -> request.paramsResolver(
+					(Function<String, Map <String, String>>)p));
 
 			return getEndpoint().apply(
 				new HttpRequestImpl(request), new HttpResponseImpl(response));
@@ -102,14 +116,27 @@ public abstract class HttpEnpointRoutes<T extends Endpoint> {
 
 	}
 
-	public static HttpEnpointRoutes ws(
+	static HttpEnpointRoutes ws(
 		WebSocketHandler endpoint, Predicate<HttpServerRequest> condition) {
 		return new WebSocketRoutes(endpoint, condition);
 	}
 
-	public static HttpEnpointRoutes noWs(
+	static HttpEnpointRoutes noWs(
 		HttpHandler endpoint, Predicate<HttpServerRequest> condition) {
 		return new NoWebSocketRoutes(endpoint, condition);
+	}
+
+	private static final Class<?> _httpPredicateClass;
+
+	static {
+		try {
+			_httpPredicateClass =
+				ClassLoaderUtil.getClassLoader().loadClass(
+					"reactor.netty.http.server.HttpPredicate");
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

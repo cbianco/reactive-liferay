@@ -1,4 +1,4 @@
-package it.cb.reactive.internal.util;
+package it.cb.reactive.internal.http.util;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

@@ -1,14 +1,6 @@
 package it.cb.reactive.http.socket;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import it.cb.reactive.http.web.HttpMessage;
 
-public interface WebSocketMessage {
-
-	String getPayloadAsString(Charset charset);
-
-	String getPayloadAsString();
-
-	ByteBuffer getPayload();
-
+public interface WebSocketMessage extends HttpMessage {
 }

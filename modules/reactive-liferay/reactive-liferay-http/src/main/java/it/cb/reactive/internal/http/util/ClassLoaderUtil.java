@@ -1,12 +1,12 @@
-package it.cb.reactive.internal.util;
+package it.cb.reactive.internal.http.util;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
 
-class ClassLoaderUtil {
+public class ClassLoaderUtil {
 
-	static ClassLoader getClassLoader() {
+	public static ClassLoader getClassLoader() {
 
 		Bundle bundle = FrameworkUtil.getBundle(ClassLoaderUtil.class);
 

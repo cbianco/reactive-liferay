@@ -1,4 +1,4 @@
-package it.cb.reactive.internal;
+package it.cb.reactive.internal.http;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
@@ -6,8 +6,8 @@ import io.vavr.collection.List;
 import it.cb.reactive.http.socket.WebSocketHandler;
 import it.cb.reactive.http.web.Endpoint;
 import it.cb.reactive.http.web.HttpHandler;
-import it.cb.reactive.internal.util.HttpPredicateUtil;
-import it.cb.reactive.internal.util.ServiceTrackerProcessor;
+import it.cb.reactive.internal.http.util.HttpPredicateUtil;
+import it.cb.reactive.internal.http.util.ServiceTrackerProcessor;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -20,7 +20,7 @@ import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 import reactor.netty.resources.LoopResources;
 
-@Component(immediate = true)
+@Component(immediate = true, service = ReactorNettyActivator.class)
 public class ReactorNettyActivator {
 
 	@interface Config {

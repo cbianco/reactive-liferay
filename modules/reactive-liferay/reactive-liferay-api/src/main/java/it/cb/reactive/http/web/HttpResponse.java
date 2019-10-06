@@ -141,6 +141,9 @@ public interface HttpResponse {
 
 	Publisher<Void> send(Publisher<? extends ByteBuffer> dataStream);
 
+	Publisher<Void> sendHttpMessage(
+		Publisher<? extends HttpMessage> httpMessage);
+
 	/**
 	 * Sends data to the peer, listens for any error on write and closes on terminal signal
 	 * (complete|error). <p>A new {@link Publisher<Void>} type (or the same) for typed send

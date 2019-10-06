@@ -1,30 +1,62 @@
 package it.cb.reactive.internal.http;
 
 import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import it.cb.reactive.http.web.Cookie;
 import it.cb.reactive.http.web.HttpHandler;
+import it.cb.reactive.http.web.HttpMessage;
 import it.cb.reactive.http.web.HttpRequest;
+import org.reactivestreams.Publisher;
 import reactor.netty.http.server.HttpServerRequest;
 
 import java.net.InetSocketAddress;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class HttpRequestImpl implements HttpRequest {
 
+	private final Map<String, List<String>> _queryParams;
+
 	public HttpRequestImpl(HttpServerRequest request) {
 		_httpServerRequest = request;
+
+		_queryParams = Collections.unmodifiableMap(
+			new QueryStringDecoder(request.uri()).parameters());
 	}
 
 	@Override
-	public String param(CharSequence key) {
+	public String pathParam(CharSequence key) {
 		return _httpServerRequest.param(key);
 	}
 
 	@Override
-	public Map<String, String> params() {
-		return _httpServerRequest.params();
+	public Map<String, String> pathParams() {
+
+		Map<String, String> params = _httpServerRequest.params();
+
+		return params == null ? Collections.emptyMap() : params;
+	}
+
+	@Override
+	public Optional<String> firstParam(String key) {
+		return _queryParams
+			.getOrDefault(key, Collections.emptyList())
+			.stream()
+			.findFirst();
+	}
+
+	@Override
+	public List<String> params(String key) {
+		return Collections.unmodifiableList(
+			_queryParams.getOrDefault(key, Collections.emptyList()));
+	}
+
+	@Override
+	public Map<String, List<String>> params() {
+		return _queryParams;
 	}
 
 	@Override
@@ -82,6 +114,14 @@ public class HttpRequestImpl implements HttpRequest {
 	@Override
 	public String version() {
 		return _httpServerRequest.version().text();
+	}
+
+	@Override
+	public Publisher<HttpMessage> receive() {
+		return _httpServerRequest
+			.receive()
+			.retain()
+			.map(HttpMessageImpl::new);
 	}
 
 	public HttpServerRequest getHttpServerRequest() {
